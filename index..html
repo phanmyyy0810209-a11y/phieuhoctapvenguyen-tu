@@ -1,0 +1,1289 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phiếu Học Tập: Ôn Tập Cấu Tạo Nguyên Tử</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-dark: #4338ca;
+            --secondary: #8b5cf6;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --bg-body: #f3f4f6;
+            --bg-card: #ffffff;
+            --text-main: #1f2937;
+            --text-muted: #6b7280;
+            --border: #e5e7eb;
+            --radius: 12px;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --header-gradient: linear-gradient(135deg, #2563eb, #4f46e5, #9333ea);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Roboto', sans-serif; background-color: var(--bg-body); color: var(--text-main); line-height: 1.6; }
+        
+        /* Đảm bảo thẻ sup, sub luôn hoạt động chuẩn xác */
+        sup { vertical-align: super; font-size: 0.8em; line-height: 0; position: relative; }
+        sub { vertical-align: sub; font-size: 0.8em; line-height: 0; position: relative; }
+
+        /* Class hiển thị Kí hiệu nguyên tử đẹp (số khối và số hiệu thẳng hàng dọc) */
+        .isotope { display: inline-flex; align-items: center; vertical-align: middle; gap: 2px; margin: 0 3px; }
+        .iso-script { display: inline-flex; flex-direction: column; font-size: 0.75em; line-height: 1.1; text-align: right; font-weight: 500; }
+        .iso-script span { display: block; }
+        .iso-symbol { font-size: 1em; font-weight: 500; }
+
+        .container { max-width: 900px; margin: 40px auto; background: var(--bg-card); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; position: relative; }
+        
+        .header { background: var(--header-gradient); color: white; padding: 30px; text-align: center; position: relative; }
+        .header h1 { font-size: 1.8rem; margin-bottom: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+        .header p { opacity: 0.9; font-size: 1.1rem; }
+        
+        .student-info { background: #f8fafc; padding: 20px 30px; border-bottom: 1px solid var(--border); display: flex; gap: 20px; flex-wrap: wrap; }
+        .input-group { flex: 1; min-width: 200px; display: flex; flex-direction: column; gap: 5px; }
+        .input-group label { font-weight: 500; font-size: 0.9rem; color: var(--text-muted); }
+        .input-group input { padding: 10px 15px; border: 1px solid var(--border); border-radius: 8px; font-size: 1rem; transition: all 0.3s; }
+        .input-group input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2); }
+
+        .goals { padding: 20px 30px; background: #eff6ff; border-left: 4px solid #3b82f6; margin: 20px 30px; border-radius: 0 var(--radius) var(--radius) 0; }
+        .goals h3 { color: #1d4ed8; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+        .goals ul { padding-left: 20px; color: #1e3a8a; }
+
+        .section { padding: 30px; border-bottom: 2px dashed var(--border); display: none; /* Hidden by default, toggled via JS */ }
+        .section.active { display: block; }
+        .section-title { font-size: 1.3rem; font-weight: 700; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; padding-bottom: 10px; border-bottom: 2px solid var(--border); }
+        .section-title .badge { background: #e0e7ff; color: var(--primary-dark); font-size: 0.85rem; padding: 4px 10px; border-radius: 20px; font-weight: 500; }
+        
+        /* Theming for different sections */
+        .sec-mcq .section-title { color: #0284c7; border-color: #bae6fd; }
+        .sec-fill .section-title { color: #059669; border-color: #a7f3d0; }
+        .sec-tf .section-title { color: #d97706; border-color: #fde68a; }
+        .sec-match .section-title { color: #7c3aed; border-color: #ddd6fe; }
+        .sec-drag .section-title { color: #db2777; border-color: #fbcfe8; }
+        .sec-table .section-title { color: #ea580c; border-color: #fed7aa; }
+
+        .question-block { margin-bottom: 25px; padding: 15px; background: #fdfdfd; border-radius: 8px; border: 1px solid var(--border); }
+        .question-text { font-weight: 500; margin-bottom: 15px; font-size: 1.05rem; }
+        
+        /* MCQ */
+        .options-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-top: 10px; }
+        .option-label { display: flex; align-items: center; padding: 12px 15px; border: 1px solid var(--border); border-radius: 8px; cursor: pointer; transition: all 0.2s; background: white; font-size: 1rem; }
+        .option-label:hover { background: #f3f4f6; border-color: #cbd5e1; }
+        .option-label input { margin-right: 12px; width: 18px; height: 18px; accent-color: var(--primary); cursor: pointer; flex-shrink: 0; }
+        .option-label.selected { border-color: var(--primary); background: #e0e7ff; box-shadow: 0 0 0 1px var(--primary); }
+
+        @media (max-width: 600px) {
+            .options-grid { grid-template-columns: 1fr; gap: 10px; }
+        }
+
+        /* Fill Blank */
+        .fill-blank { padding: 4px 8px; border: 1px solid #94a3b8; border-radius: 4px; border-bottom: 2px solid var(--primary); background: #f8fafc; width: 100px; text-align: center; font-weight: bold; color: var(--primary-dark); font-size: 1rem; transition: 0.3s; }
+        .fill-blank:focus { outline: none; background: #fff; width: 120px; }
+
+        /* True/False */
+        .tf-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        .tf-table th, .tf-table td { border: 1px solid var(--border); padding: 12px; text-align: left; }
+        .tf-table th { background: #f1f5f9; text-align: center; width: 80px; }
+        .tf-table td.tf-statement { width: auto; text-align: left; }
+        .tf-radio { accent-color: var(--primary); width: 20px; height: 20px; cursor: pointer; }
+
+        /* Matching */
+        .match-container { display: flex; justify-content: space-between; gap: 20px; }
+        .match-column { flex: 1; display: flex; flex-direction: column; gap: 10px; }
+        .match-item { padding: 15px; border: 2px solid var(--border); border-radius: 8px; cursor: pointer; text-align: center; background: white; transition: all 0.2s; user-select: none; }
+        .match-item:hover { border-color: var(--secondary); background: #f5f3ff; }
+        .match-item.selected { border-color: var(--primary); background: var(--primary); color: white; transform: scale(1.02); }
+        .match-item.matched { background: #f0fdf4; border-color: var(--success); color: var(--success); cursor: default; }
+
+        /* Drag and Drop */
+        .drag-items { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; padding: 15px; background: #f8fafc; border-radius: 8px; border: 1px dashed #cbd5e1; min-height: 80px; }
+        .draggable { padding: 10px 20px; background: white; border: 2px solid var(--primary); color: var(--primary-dark); border-radius: 8px; font-weight: bold; cursor: grab; user-select: none; box-shadow: 0 2px 4px rgba(0,0,0,0.05); display: flex; align-items: center; justify-content: center; }
+        .draggable:active { cursor: grabbing; opacity: 0.8; transform: scale(0.95); }
+        .draggable img { max-width: 80px; max-height: 80px; object-fit: contain; } /* Support for images */
+        
+        .dropzone-container { display: flex; flex-direction: column; gap: 15px; }
+        .drop-row { display: flex; align-items: center; gap: 15px; background: #fff; padding: 10px; border: 1px solid var(--border); border-radius: 8px; }
+        .drop-label { flex: 1; font-weight: 500; }
+        .dropzone { width: 150px; height: 50px; border: 2px dashed #94a3b8; border-radius: 8px; background: #f1f5f9; display: flex; align-items: center; justify-content: center; transition: all 0.3s; }
+        .dropzone.dragover { border-color: var(--primary); background: #e0e7ff; transform: scale(1.05); }
+        .dropzone.has-item { border-style: solid; border-color: var(--success); background: white; }
+
+        /* Summary Table / Dropdown Matrix */
+        .summary-select { padding: 6px 10px; border: 2px solid #cbd5e1; border-radius: 6px; background: #f8fafc; color: var(--primary-dark); font-weight: bold; font-size: 0.95rem; cursor: pointer; outline: none; transition: all 0.3s; width: 120px; }
+        .summary-select:focus { border-color: var(--primary); background: #fff; }
+        .summary-select:disabled { cursor: not-allowed; opacity: 0.9; }
+
+        /* Actions & Summary */
+        .actions { padding: 30px; text-align: center; border-top: 1px solid var(--border); background: #f8fafc; }
+        .btn-submit { background: linear-gradient(135deg, #10b981, #059669); color: white; border: none; padding: 15px 40px; font-size: 1.2rem; font-weight: bold; border-radius: 30px; cursor: pointer; box-shadow: 0 4px 6px rgba(16, 185, 129, 0.3); transition: all 0.3s; text-transform: uppercase; letter-spacing: 1px; }
+        .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 6px 12px rgba(16, 185, 129, 0.4); }
+        .btn-submit:disabled { background: #9ca3af; cursor: not-allowed; transform: none; box-shadow: none; }
+
+        .summary { margin: 30px; padding: 25px; background: linear-gradient(to right, #fffbeb, #fef3c7); border-radius: var(--radius); border-left: 5px solid #f59e0b; display: none; }
+        .summary h3 { color: #b45309; margin-bottom: 15px; text-transform: uppercase; }
+        .summary ul { padding-left: 20px; line-height: 1.8; color: #78350f; font-weight: 500; }
+
+        /* Feedback Classes */
+        .correct-ans { color: var(--success); font-weight: bold; margin-left: 10px; display: none; font-size: 0.9rem; }
+        .show-feedback .correct-ans { display: inline-flex; align-items: center; gap: 5px; }
+        .item-correct { border-color: var(--success) !important; background-color: #ecfdf5 !important; }
+        .item-incorrect { border-color: var(--danger) !important; background-color: #fef2f2 !important; }
+        .text-correct { color: var(--success); }
+        .text-incorrect { color: var(--danger); text-decoration: line-through; }
+
+        /* Admin Setup */
+        .btn-admin { position: fixed; bottom: 20px; left: 20px; background: #dc2626; border: 2px solid white; color: white; padding: 12px 24px; border-radius: 30px; cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1rem; box-shadow: 0 4px 12px rgba(0,0,0,0.3); z-index: 9999; letter-spacing: 0.5px; text-transform: uppercase; }
+        .btn-admin:hover { background: #b91c1c; transform: translateY(-3px); box-shadow: 0 6px 16px rgba(0,0,0,0.4); }
+        
+        .admin-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 10000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
+        .admin-content { background: white; width: 90%; max-width: 600px; max-height: 90vh; overflow-y: auto; border-radius: 16px; padding: 30px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); }
+        .admin-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
+        .admin-header h2 { color: var(--primary-dark); }
+        .close-admin { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text-muted); }
+        
+        .admin-group { background: #f8fafc; padding: 15px; border-radius: 8px; margin-bottom: 15px; border: 1px solid var(--border); }
+        .admin-group-title { font-weight: bold; margin-bottom: 10px; color: #334155; display: flex; align-items: center; justify-content: space-between; }
+        .toggle-switch { position: relative; display: inline-block; width: 44px; height: 24px; }
+        .toggle-switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 24px; }
+        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked + .slider { background-color: var(--success); }
+        input:checked + .slider:before { transform: translateX(20px); }
+
+        .admin-row { display: flex; gap: 15px; margin-top: 10px; }
+        .admin-col { flex: 1; display: flex; flex-direction: column; gap: 5px; }
+        .admin-col label { font-size: 0.85rem; color: var(--text-muted); }
+        .admin-col input { padding: 8px; border: 1px solid var(--border); border-radius: 6px; }
+        
+        .admin-footer { margin-top: 20px; text-align: right; border-top: 1px solid var(--border); padding-top: 15px; display: flex; justify-content: space-between; align-items: center; }
+        .total-check { font-weight: bold; color: var(--text-main); }
+        .total-check.error { color: var(--danger); }
+        .btn-save { background: var(--primary); color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: bold; }
+        
+        /* Result Overlay */
+        .result-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 2000; display: none; align-items: center; justify-content: center; }
+        .result-card { background: white; padding: 40px; border-radius: 20px; text-align: center; max-width: 400px; width: 90%; animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        @keyframes popIn { 0% { transform: scale(0.5); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+        .score-circle { width: 120px; height: 120px; border-radius: 50%; background: conic-gradient(var(--success) 0%, #e5e7eb 0); display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; position: relative; }
+        .score-inner { width: 100px; height: 100px; background: white; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .score-val { font-size: 2rem; font-weight: bold; color: var(--success); line-height: 1; }
+        .score-max { font-size: 1rem; color: var(--text-muted); }
+        .btn-close-result { margin-top: 20px; background: var(--primary); color: white; border: none; padding: 10px 25px; border-radius: 20px; cursor: pointer; font-weight: bold; }
+
+        /* Custom Modals (Thay thế Alert/Confirm/Prompt mặc định) */
+        .custom-modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 20000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
+        .custom-modal-box { background: white; padding: 25px; border-radius: 12px; width: 90%; max-width: 400px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); animation: popIn 0.3s ease-out; }
+        .custom-modal-box h3 { margin-bottom: 15px; color: var(--primary-dark); }
+        .custom-modal-box input { width: 100%; padding: 12px; margin: 10px 0 20px; border: 1px solid var(--border); border-radius: 8px; font-size: 1rem; transition: 0.3s; }
+        .custom-modal-box input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2); }
+        .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 10px; }
+        .btn-modal { padding: 10px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; border: none; transition: 0.2s; }
+        .btn-modal.gray { background: #e5e7eb; color: #374151; }
+        .btn-modal.gray:hover { background: #d1d5db; }
+        .btn-modal.blue { background: var(--primary); color: white; }
+        .btn-modal.blue:hover { background: var(--primary-dark); }
+
+    </style>
+</head>
+<body>
+
+<button class="btn-admin" onclick="promptAdmin()" title="Mở bảng cài đặt giáo viên">⚙️ Quản trị</button>
+
+<div class="container" id="app">
+    
+    <div class="header">
+        <h1>PHIẾU HỌC TẬP TƯƠNG TÁC</h1>
+        <p id="display-lesson-name">Ôn tập về cấu tạo nguyên tử</p>
+        <p id="display-subject-grade" style="font-size: 1rem; opacity: 0.9; margin-top: 5px;">Môn: Hóa Học - Lớp: 10</p>
+    </div>
+
+    <div class="student-info">
+        <div class="input-group">
+            <label for="studentName">Họ và tên học sinh:</label>
+            <input type="text" id="studentName" placeholder="Nhập họ tên của em..." required>
+        </div>
+        <div class="input-group" style="flex: 0.3;">
+            <label for="studentClass">Lớp:</label>
+            <input type="text" id="studentClass" placeholder="Ví dụ: 10A1" required>
+        </div>
+    </div>
+
+    <div class="goals">
+        <h3><i class="fas fa-bullseye"></i> Mục tiêu & Hướng dẫn</h3>
+        <ul>
+            <li>Củng cố kiến thức về các loại hạt cơ bản (proton, neutron, electron).</li>
+            <li>Nắm vững cách viết và đặc điểm cấu hình electron nguyên tử.</li>
+            <li>Thao tác trực tiếp trên phiếu: chọn đáp án, điền từ, kéo thả và xem video.</li>
+            <li>Bấm <b>"NỘP BÀI & CHẤM ĐIỂM"</b> ở cuối trang để xem kết quả.</li>
+        </ul>
+    </div>
+
+    <div id="sec-mcq" class="section sec-mcq active">
+        <div class="section-title">
+            <span><i class="fas fa-check-circle"></i> Khu vực 1: Trắc nghiệm nhanh</span>
+            <span class="badge" id="badge-mcq">5 câu - 2.5 điểm</span>
+        </div>
+        <div class="questions-container" id="mcq-container">
+            <div class="question-block" data-qid="mcq_1">
+                <div class="question-text">Câu 1: Số proton, neutron và electron của <span class="isotope"><span class="iso-script"><span>39</span><span>19</span></span><span class="iso-symbol">K</span></span> lần lượt là:</div>
+                <div class="options-grid">
+                    <label class="option-label"><input type="radio" name="mcq_1" value="A"> <span>A. 19, 20, 39.</span></label>
+                    <label class="option-label"><input type="radio" name="mcq_1" value="B"> <span>B. 20, 19, 39.</span></label>
+                    <label class="option-label"><input type="radio" name="mcq_1" value="C"> <span>C. 19, 20, 19.</span></label>
+                    <label class="option-label"><input type="radio" name="mcq_1" value="D"> <span>D. 19, 19, 20.</span></label>
+                </div>
+                <div class="correct-ans">Đáp án đúng: C</div>
+            </div>
+
+            <div class="question-block" data-qid="mcq_2">
+                <div class="question-text">Câu 2: Nguyên tử của nguyên tố nào sau đây có 3 electron thuộc lớp ngoài cùng?</div>
+                <div class="options-grid">
+                    <label class="option-label"><input type="radio" name="mcq_2" value="A"> <span>A. <span class="isotope"><span class="iso-script"><span>23</span><span>11</span></span><span class="iso-symbol">Na</span></span></span></label>
+                    <label class="option-label"><input type="radio" name="mcq_2" value="B"> <span>B. <span class="isotope"><span class="iso-script"><span>14</span><span>7</span></span><span class="iso-symbol">N</span></span></span></label>
+                    <label class="option-label"><input type="radio" name="mcq_2" value="C"> <span>C. <span class="isotope"><span class="iso-script"><span>27</span><span>13</span></span><span class="iso-symbol">Al</span></span></span></label>
+                    <label class="option-label"><input type="radio" name="mcq_2" value="D"> <span>D. <span class="isotope"><span class="iso-script"><span>12</span><span>6</span></span><span class="iso-symbol">C</span></span></span></label>
+                </div>
+                <div class="correct-ans">Đáp án đúng: C</div>
+            </div>
+
+            <div class="question-block" data-qid="mcq_3">
+                <div class="question-text">Câu 3: Nguyên tử potassium có 19 electron. Ở trạng thái cơ bản, potassium có số orbital chứa electron là:</div>
+                <div class="options-grid">
+                    <label class="option-label"><input type="radio" name="mcq_3" value="A"> <span>A. 8.</span></label>
+                    <label class="option-label"><input type="radio" name="mcq_3" value="B"> <span>B. 9.</span></label>
+                    <label class="option-label"><input type="radio" name="mcq_3" value="C"> <span>C. 11.</span></label>
+                    <label class="option-label"><input type="radio" name="mcq_3" value="D"> <span>D. 10.</span></label>
+                </div>
+                <div class="correct-ans">Đáp án đúng: D</div>
+            </div>
+
+            <div class="question-block" data-qid="mcq_4">
+                <div class="question-text">Câu 4: Nguyên tử của nguyên tố sodium (natri) (Z = 11) có cấu hình electron là:</div>
+                <div class="options-grid">
+                    <label class="option-label"><input type="radio" name="mcq_4" value="A"> <span>A. 1s<sup>2</sup> 2s<sup>2</sup> 2p<sup>6</sup> 3s<sup>2</sup></span></label>
+                    <label class="option-label"><input type="radio" name="mcq_4" value="B"> <span>B. 1s<sup>2</sup> 2s<sup>2</sup> 2p<sup>6</sup></span></label>
+                    <label class="option-label"><input type="radio" name="mcq_4" value="C"> <span>C. 1s<sup>2</sup> 2s<sup>2</sup> 2p<sup>6</sup> 3s<sup>1</sup></span></label>
+                    <label class="option-label"><input type="radio" name="mcq_4" value="D"> <span>D. 1s<sup>2</sup> 2s<sup>2</sup> 2p<sup>5</sup> 3s<sup>2</sup></span></label>
+                </div>
+                <div class="correct-ans">Đáp án đúng: C</div>
+            </div>
+
+            <div class="question-block" data-qid="mcq_5">
+                <div class="question-text">Câu 5: Tổng số hạt proton, neutron và electron trong nguyên tử X là 58. Số hạt mang điện nhiều hơn số hạt không mang điện là 18. X là:</div>
+                <div class="options-grid">
+                    <label class="option-label"><input type="radio" name="mcq_5" value="A"> <span>A. Cl (Z = 17).</span></label>
+                    <label class="option-label"><input type="radio" name="mcq_5" value="B"> <span>B. Ca (Z = 20).</span></label>
+                    <label class="option-label"><input type="radio" name="mcq_5" value="C"> <span>C. K (Z = 19).</span></label>
+                    <label class="option-label"><input type="radio" name="mcq_5" value="D"> <span>D. S (Z = 16).</span></label>
+                </div>
+                <div class="correct-ans">Đáp án đúng: C</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="sec-fill" class="section sec-fill active">
+        <div class="section-title">
+            <span><i class="fas fa-keyboard"></i> Khu vực 2: Hoàn thành phát biểu</span>
+            <span class="badge" id="badge-fill">2 câu - 2 điểm</span>
+        </div>
+        <div class="questions-container" id="fill-container">
+            <div class="question-block" data-qid="fill_1">
+                <div class="question-text">
+                    Câu 6: Nguyên tố chlorine có Z = 17. Nguyên tử chlorine có 
+                    <input type="text" class="fill-blank" data-ans="3" placeholder="..."> lớp electron, 
+                    <input type="text" class="fill-blank" data-ans="7" placeholder="..."> electron thuộc lớp ngoài cùng và 
+                    <input type="text" class="fill-blank" data-ans="1" placeholder="..."> electron độc thân.
+                </div>
+                <div class="correct-ans">Đáp án: 3 lớp, 7 electron ngoài cùng, 1 electron độc thân.</div>
+            </div>
+            
+            <div class="question-block" data-qid="fill_2">
+                <div class="question-text">
+                    Câu 7: Nguyên tử khối trung bình của vanadium (V) là 50,9975. Nguyên tố V có 2 đồng vị trong đó đồng vị <span class="isotope"><span class="iso-script"><span>50</span><span>23</span></span><span class="iso-symbol">V</span></span> chiếm 0,25%. 
+                    Số khối của đồng vị còn lại là <input type="text" class="fill-blank" data-ans="51" placeholder="...">.
+                </div>
+                <div class="correct-ans">Đáp án: 51</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="sec-tf" class="section sec-tf active">
+        <div class="section-title">
+            <span><i class="fas fa-balance-scale"></i> Khu vực 3: Phán đoán Đúng / Sai</span>
+            <span class="badge" id="badge-tf">4 câu - 1.5 điểm</span>
+        </div>
+        <div class="question-block">
+            <div class="question-text">Câu 8: Cấu hình electron của:<br>
+            – Nguyên tử X: 1s<sup>2</sup> 2s<sup>2</sup> 2p<sup>6</sup> 3s<sup>2</sup> 3p<sup>6</sup> 4s<sup>1</sup><br>
+            – Nguyên tử Y: 1s<sup>2</sup> 2s<sup>2</sup> 2p<sup>6</sup> 3s<sup>2</sup> 3p<sup>4</sup><br>
+            Xác định tính Đúng/Sai của các phát biểu sau:</div>
+            <table class="tf-table">
+                <thead>
+                    <tr>
+                        <th style="color:var(--success)">Đúng</th>
+                        <th style="color:var(--danger)">Sai</th>
+                        <th class="tf-statement">Phát biểu</th>
+                    </tr>
+                </thead>
+                <tbody id="tf-container">
+                    <tr data-qid="tf_1" data-ans="T">
+                        <td style="text-align:center"><input type="radio" name="tf_1" value="T" class="tf-radio"></td>
+                        <td style="text-align:center"><input type="radio" name="tf_1" value="F" class="tf-radio"></td>
+                        <td class="tf-statement">a) Mỗi nguyên tử X chứa 19 electron, nguyên tử Y chứa 16 electron. <span class="correct-ans">- ĐÚNG</span></td>
+                    </tr>
+                    <tr data-qid="tf_2" data-ans="F">
+                        <td style="text-align:center"><input type="radio" name="tf_2" value="T" class="tf-radio"></td>
+                        <td style="text-align:center"><input type="radio" name="tf_2" value="F" class="tf-radio"></td>
+                        <td class="tf-statement">b) Lớp electron trong nguyên tử X có mức năng lượng cao nhất là lớp thứ 3. <span class="correct-ans">- SAI (Lớp 4)</span></td>
+                    </tr>
+                    <tr data-qid="tf_3" data-ans="F">
+                        <td style="text-align:center"><input type="radio" name="tf_3" value="T" class="tf-radio"></td>
+                        <td style="text-align:center"><input type="radio" name="tf_3" value="F" class="tf-radio"></td>
+                        <td class="tf-statement">c) Mỗi nguyên tử X và Y đều có 3 lớp electron. <span class="correct-ans">- SAI (X có 4 lớp)</span></td>
+                    </tr>
+                    <tr data-qid="tf_4" data-ans="T">
+                        <td style="text-align:center"><input type="radio" name="tf_4" value="T" class="tf-radio"></td>
+                        <td style="text-align:center"><input type="radio" name="tf_4" value="F" class="tf-radio"></td>
+                        <td class="tf-statement">d) X là nguyên tố kim loại, Y là nguyên tố phi kim. <span class="correct-ans">- ĐÚNG</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="sec-match" class="section sec-match active">
+        <div class="section-title">
+            <span><i class="fas fa-link"></i> Khu vực 4: Ghép nối tương ứng</span>
+            <span class="badge" id="badge-match">4 cặp - 1.5 điểm</span>
+        </div>
+        <div class="question-block">
+            <div class="question-text">Câu 9: Nguyên tố X được dùng để chế tạo hợp kim nhẹ, bền, dùng trong nhiều lĩnh vực: hàng không, ô tô, xây dựng... Nguyên tố Y ở dạng YO<sub>4</sub><sup>3-</sup>, đóng vai trò quan trọng trong các phân tử sinh học. Nguyên tử của nguyên tố X có cấu hình electron kết thúc ở phân lớp 3p<sup>1</sup>. Nguyên tử của nguyên tố Y có cấu hình electron kết thúc ở phân lớp 3p<sup>3</sup>. Hãy ghép nối thông tin ở Cột A với Cột B sao cho đúng. <br><i>(Cách làm: Bấm chọn 1 ô ở Cột A, sau đó bấm chọn ô tương ứng ở Cột B)</i></div>
+            
+            <div class="match-container" id="match-container">
+                <div class="match-column col-a">
+                    <h4 style="text-align:center; color: var(--text-muted);">CỘT A</h4>
+                    <div class="match-item item-a" data-id="A1">1. Số hiệu nguyên tử (Z) của X</div>
+                    <div class="match-item item-a" data-id="A2">2. Số hiệu nguyên tử (Z) của Y</div>
+                    <div class="match-item item-a" data-id="A3">3. Tính chất hóa học của X</div>
+                    <div class="match-item item-a" data-id="A4">4. Tính chất hóa học của Y</div>
+                </div>
+                <div class="match-column col-b">
+                    <h4 style="text-align:center; color: var(--text-muted);">CỘT B</h4>
+                    <!-- Shuffled rendering -->
+                    <div class="match-item item-b" data-id="B3">A. Là Kim loại</div>
+                    <div class="match-item item-b" data-id="B2">B. Z = 15</div>
+                    <div class="match-item item-b" data-id="B4">C. Là Phi kim</div>
+                    <div class="match-item item-b" data-id="B1">D. Z = 13</div>
+                </div>
+            </div>
+            <!-- Answer key for JS: A1-B1, A2-B2, A3-B3, A4-B4 -->
+            <div class="correct-ans" id="match-ans" style="margin-top:15px; display:none;">Đáp án: 1-D, 2-B, 3-A, 4-C</div>
+        </div>
+    </div>
+
+    <div id="sec-drag" class="section sec-drag active">
+        <div class="section-title">
+            <span><i class="fas fa-hand-paper"></i> Khu vực 5: Kéo thả dữ liệu</span>
+            <span class="badge" id="badge-drag">4 vị trí - 1.5 điểm</span>
+        </div>
+        <div class="question-block">
+            <div class="question-text">Câu 10: Nguyên tử X có tổng số hạt là 49. Số hạt không mang điện bằng 53,125% số hạt mang điện. Hãy kéo các giá trị thích hợp thả vào ô trống để hoàn thiện đặc điểm của X.</div>
+            
+            <div class="drag-items" id="drag-source">
+                <!-- Data-match represents the valid dropzone ID -->
+                <div class="draggable" draggable="true" id="drag_1" data-val="16">16</div>
+                <div class="draggable" draggable="true" id="drag_2" data-val="17">17</div>
+                <div class="draggable" draggable="true" id="drag_3" data-val="33">33</div>
+                <div class="draggable" draggable="true" id="drag_4" data-val="S">S (Sulfur)</div>
+            </div>
+
+            <div class="dropzone-container" id="drop-container">
+                <div class="drop-row">
+                    <div class="drop-label">1. Số proton (p) = Số electron (e) = </div>
+                    <div class="dropzone" id="drop_1" data-ans="16"></div>
+                </div>
+                <div class="drop-row">
+                    <div class="drop-label">2. Số neutron (n) = </div>
+                    <div class="dropzone" id="drop_2" data-ans="17"></div>
+                </div>
+                <div class="drop-row">
+                    <div class="drop-label">3. Số khối (A) = </div>
+                    <div class="dropzone" id="drop_3" data-ans="33"></div>
+                </div>
+                <div class="drop-row">
+                    <div class="drop-label">4. Kí hiệu hóa học của nguyên tố X là: </div>
+                    <div class="dropzone" id="drop_4" data-ans="S"></div>
+                </div>
+            </div>
+            <div class="correct-ans" id="drag-ans" style="margin-top:15px;">Đáp án: p=e=16, n=17, A=33, Kí hiệu: S</div>
+        </div>
+    </div>
+
+    <div id="sec-table" class="section sec-table active">
+        <div class="section-title">
+            <span><i class="fas fa-table"></i> Khu vực 6: Bảng Tổng Hợp Kiến Thức</span>
+            <span class="badge" id="badge-table">6 vị trí - 1 điểm</span>
+        </div>
+        <div class="question-block">
+            <div class="question-text">Câu 11: Bấm vào các ô trống và chọn thông tin chính xác từ menu thả xuống để hoàn thiện bảng tổng hợp về các loại hạt cơ bản tạo nên nguyên tử.</div>
+            
+            <table class="tf-table" style="text-align: center;">
+                <thead>
+                    <tr>
+                        <th style="text-align: center;">Loại hạt</th>
+                        <th style="text-align: center;">Kí hiệu</th>
+                        <th style="text-align: center;">Điện tích</th>
+                        <th style="text-align: center;">Vị trí</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Proton</strong></td>
+                        <td>p</td>
+                        <td>
+                            <select class="summary-select" data-ans="+1">
+                                <option value="">-- Chọn --</option>
+                                <option value="+1">+1</option>
+                                <option value="0">0</option>
+                                <option value="-1">-1</option>
+                            </select>
+                        </td>
+                        <td>
+                            <select class="summary-select" data-ans="Hạt nhân">
+                                <option value="">-- Chọn --</option>
+                                <option value="Hạt nhân">Hạt nhân</option>
+                                <option value="Lớp vỏ">Lớp vỏ</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>Neutron</strong></td>
+                        <td>n</td>
+                        <td>
+                            <select class="summary-select" data-ans="0">
+                                <option value="">-- Chọn --</option>
+                                <option value="+1">+1</option>
+                                <option value="0">0</option>
+                                <option value="-1">-1</option>
+                            </select>
+                        </td>
+                        <td>
+                            <select class="summary-select" data-ans="Hạt nhân">
+                                <option value="">-- Chọn --</option>
+                                <option value="Hạt nhân">Hạt nhân</option>
+                                <option value="Lớp vỏ">Lớp vỏ</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>Electron</strong></td>
+                        <td>e</td>
+                        <td>
+                            <select class="summary-select" data-ans="-1">
+                                <option value="">-- Chọn --</option>
+                                <option value="+1">+1</option>
+                                <option value="0">0</option>
+                                <option value="-1">-1</option>
+                            </select>
+                        </td>
+                        <td>
+                            <select class="summary-select" data-ans="Lớp vỏ">
+                                <option value="">-- Chọn --</option>
+                                <option value="Hạt nhân">Hạt nhân</option>
+                                <option value="Lớp vỏ">Lớp vỏ</option>
+                            </select>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="actions">
+        <button class="btn-submit" id="btnSubmit" onclick="submitQuiz()">Nộp bài & Chấm điểm</button>
+    </div>
+
+    <div class="summary" id="summary-section">
+        <h3><i class="fas fa-lightbulb"></i> GHI NHỚ SIÊU NHANH</h3>
+        <ul>
+            <li>Nguyên tử gồm hạt nhân (Proton +, Neutron không mang điện) và vỏ (Electron -).</li>
+            <li>Đồng vị là các nguyên tử có cùng số proton nhưng khác số neutron (khác số khối A).</li>
+            <li>Quy tắc sắp xếp electron: 1s 2s 2p 3s 3p 4s 3d 4p...</li>
+            <li>1, 2, 3 e lớp ngoài cùng: Kim loại (Trừ H, He, B). 5, 6, 7 e: Phi kim. 8 e: Khí hiếm.</li>
+        </ul>
+    </div>
+
+</div>
+
+<div class="admin-modal" id="adminModal">
+    <div class="admin-content">
+        <div class="admin-header">
+            <h2>⚙️ Cài đặt Giáo viên</h2>
+            <button class="close-admin" onclick="closeAdmin()">×</button>
+        </div>
+        <div id="admin-form">
+            <div class="admin-row" style="margin-bottom: 15px;">
+                <div class="admin-col">
+                    <label style="font-weight:bold;">Môn học:</label>
+                    <input type="text" id="cfg-subject" value="Hóa Học">
+                </div>
+                <div class="admin-col">
+                    <label style="font-weight:bold;">Khối lớp:</label>
+                    <input type="text" id="cfg-grade" value="10">
+                </div>
+            </div>
+            <div class="admin-group">
+                <label style="font-weight:bold; display:block; margin-bottom:5px;">Tên bài học:</label>
+                <input type="text" id="cfg-lesson-name" style="width:100%; padding:8px; border:1px solid var(--border); border-radius:4px;" value="Ôn tập về cấu tạo nguyên tử">
+            </div>
+            <div class="admin-group">
+                <label style="font-weight:bold; display:block; margin-bottom:5px;">Nội dung bài học / Ghi chú (Không bắt buộc):</label>
+                <textarea id="cfg-lesson-content" style="width:100%; padding:8px; border:1px solid var(--border); border-radius:4px;" rows="3"></textarea>
+            </div>
+            <div class="admin-group">
+                <label style="font-weight:bold; display:block; margin-bottom:5px;">Tổng điểm toàn phiếu:</label>
+                <input type="number" id="cfg-target-points" style="width:100%; padding:8px; border:1px solid var(--border); border-radius:4px;" value="10" step="0.25" onchange="recalcTotal()">
+            </div>
+            
+            <div class="admin-group">
+                <label style="font-weight:bold; display:block; margin-bottom:10px;">Upload / Thay ảnh cho phần Kéo thả:</label>
+                <div id="admin-drag-images-container" style="display: flex; flex-direction: column; gap: 10px;">
+                    <!-- Dynamically populated by JS -->
+                </div>
+            </div>
+
+            <h3 style="margin: 20px 0 10px; color: var(--primary);">Cấu hình điểm & số câu:</h3>
+            
+            <!-- Dynamically populated by JS based on config object -->
+            <div id="admin-sections-config"></div>
+
+            <div class="admin-footer">
+                <div class="total-check" id="total-points-check">Tổng điểm: 10/10</div>
+                <button class="btn-save" onclick="saveAdminConfig()">Lưu cấu hình</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="result-overlay" id="resultModal">
+    <div class="result-card">
+        <h2 style="color:var(--text-main); margin-bottom:20px;">KẾT QUẢ CỦA EM</h2>
+        <div class="score-circle" id="score-circle">
+            <div class="score-inner">
+                <div class="score-val" id="score-val">0</div>
+                <div class="score-max" id="score-max">/10</div>
+            </div>
+        </div>
+        <p id="result-message" style="margin-bottom: 20px; font-weight:500;"></p>
+        <button class="btn-close-result" onclick="closeResult()">Xem chi tiết đáp án</button>
+    </div>
+</div>
+
+<!-- Custom Password Modal -->
+<div class="custom-modal-overlay" id="passwordModal">
+    <div class="custom-modal-box">
+        <h3>⚙️ Xác thực Quản trị</h3>
+        <p>Vui lòng nhập mật khẩu (Mặc định: 1230):</p>
+        <input type="password" id="adminPasswordInput" placeholder="Nhập mật khẩu..." onkeypress="if(event.key === 'Enter') checkPassword()">
+        <div class="modal-actions">
+            <button class="btn-modal gray" onclick="closePasswordModal()">Hủy</button>
+            <button class="btn-modal blue" onclick="checkPassword()">Xác nhận</button>
+        </div>
+    </div>
+</div>
+
+<!-- Custom Alert/Confirm Modal -->
+<div class="custom-modal-overlay" id="messageModal">
+    <div class="custom-modal-box">
+        <h3 id="msgModalTitle">Thông báo</h3>
+        <p id="msgModalText" style="margin-bottom: 20px; line-height: 1.5; color: var(--text-main);"></p>
+        <div class="modal-actions">
+            <button class="btn-modal gray" id="msgModalCancel" onclick="closeMessageModal(false)">Hủy</button>
+            <button class="btn-modal blue" id="msgModalOk" onclick="closeMessageModal(true)">Đóng</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // --- SAFE STORAGE (CHỐNG LỖI SẬP WEB KHI BỊ TRÌNH DUYỆT CHẶN BẢO MẬT) ---
+    function safeGetStorage(key) {
+        try {
+            return localStorage.getItem(key);
+        } catch (e) {
+            console.warn("Trình duyệt chặn quyền đọc LocalStorage. Khởi chạy bằng cấu hình mặc định.");
+            return null;
+        }
+    }
+
+    function safeSetStorage(key, value) {
+        try {
+            localStorage.setItem(key, value);
+            return true;
+        } catch (e) {
+            console.warn("Trình duyệt chặn quyền ghi LocalStorage hoặc file quá nặng.");
+            return false;
+        }
+    }
+
+    // --- CUSTOM MODALS LOGIC ---
+    let confirmCallback = null;
+    
+    window.showMessage = function(title, text, isConfirm = false, onConfirm = null) {
+        document.getElementById('msgModalTitle').innerText = title;
+        document.getElementById('msgModalText').innerText = text;
+        const btnCancel = document.getElementById('msgModalCancel');
+        const btnOk = document.getElementById('msgModalOk');
+        
+        if (isConfirm) {
+            btnCancel.style.display = 'block';
+            btnOk.innerText = 'Xác nhận';
+            confirmCallback = onConfirm;
+        } else {
+            btnCancel.style.display = 'none';
+            btnOk.innerText = 'Đóng';
+            confirmCallback = null;
+        }
+        document.getElementById('messageModal').style.display = 'flex';
+    }
+
+    window.closeMessageModal = function(isAccepted) {
+        document.getElementById('messageModal').style.display = 'none';
+        if (isAccepted && confirmCallback) confirmCallback();
+        confirmCallback = null;
+    }
+
+    window.promptAdmin = function() {
+        document.getElementById('passwordModal').style.display = 'flex';
+        document.getElementById('adminPasswordInput').value = '';
+        setTimeout(() => document.getElementById('adminPasswordInput').focus(), 100);
+    }
+
+    window.closePasswordModal = function() {
+        document.getElementById('passwordModal').style.display = 'none';
+    }
+
+    window.checkPassword = function() {
+        const pass = document.getElementById('adminPasswordInput').value;
+        if (pass === "1230") {
+            closePasswordModal();
+            openAdmin();
+        } else {
+            showMessage("Lỗi", "Mật khẩu không đúng!");
+        }
+    }
+
+    // --- STATE & CONFIGURATION ---
+    let config = {
+        subject: "Hóa Học",
+        grade: "10",
+        lessonName: "Ôn tập về cấu tạo nguyên tử",
+        lessonContent: "",
+        targetTotalPoints: 10,
+        dragImages: {
+            'drag_1': null, 'drag_2': null, 'drag_3': null, 'drag_4': null
+        },
+        sections: {
+            mcq: { id: 'sec-mcq', name: 'Trắc nghiệm', enabled: true, totalItems: 5, maxPoints: 2.5 },
+            fill: { id: 'sec-fill', name: 'Điền khuyết', enabled: true, totalItems: 2, maxPoints: 2.0 },
+            tf: { id: 'sec-tf', name: 'Đúng/Sai', enabled: true, totalItems: 4, maxPoints: 1.5 },
+            match: { id: 'sec-match', name: 'Nối cột', enabled: true, totalItems: 4, maxPoints: 1.5 },
+            drag: { id: 'sec-drag', name: 'Kéo thả', enabled: true, totalItems: 4, maxPoints: 1.5 },
+            table: { id: 'sec-table', name: 'Điền bảng', enabled: true, totalItems: 6, maxPoints: 1.0 }
+        }
+    };
+
+    const matchAnswers = { 'A1': 'B1', 'A2': 'B2', 'A3': 'B3', 'A4': 'B4' };
+
+    window.loadConfig = function() {
+        const saved = safeGetStorage('pht_config');
+        if (saved) {
+            try {
+                const parsed = JSON.parse(saved);
+                config.subject = parsed.subject || config.subject;
+                config.grade = parsed.grade || config.grade;
+                config.lessonName = parsed.lessonName || config.lessonName;
+                config.lessonContent = parsed.lessonContent || config.lessonContent;
+                config.targetTotalPoints = parsed.targetTotalPoints || config.targetTotalPoints;
+                if(parsed.dragImages) config.dragImages = parsed.dragImages;
+                for (let key in config.sections) {
+                    if (parsed.sections && parsed.sections[key]) {
+                        config.sections[key] = { ...config.sections[key], ...parsed.sections[key] };
+                    }
+                }
+                if (parsed.sections && parsed.sections.video) {
+                    delete config.sections.video; 
+                }
+            } catch (e) { 
+                console.error("Lỗi khi phân tích dữ liệu cấu hình", e); 
+            }
+        }
+        applyConfigToUI();
+    }
+
+    window.applyConfigToUI = function() {
+        document.title = "Phiếu Học Tập: " + config.lessonName;
+        document.getElementById('display-lesson-name').innerText = config.lessonName;
+        
+        let subGradeEl = document.getElementById('display-subject-grade');
+        if(subGradeEl) {
+            subGradeEl.innerText = `Môn: ${config.subject} - Lớp: ${config.grade}`;
+        }
+
+        for(let id in config.dragImages) {
+            if(config.dragImages[id]) {
+                const el = document.getElementById(id);
+                if(el) {
+                    el.innerHTML = `<img src="${config.dragImages[id]}" alt="Drag item" style="max-width:100%; max-height:60px; object-fit:contain;">`;
+                    el.style.padding = "5px";
+                    el.style.border = "none";
+                    el.style.boxShadow = "none";
+                    el.style.background = "transparent";
+                }
+            }
+        }
+
+        for (let key in config.sections) {
+            const sec = config.sections[key];
+            const el = document.getElementById(sec.id);
+            if (el) {
+                el.style.display = sec.enabled ? 'block' : 'none';
+                const badge = document.getElementById(`badge-${key}`);
+                if (badge) {
+                    let unit = key === 'match' ? 'cặp' : (key === 'drag' ? 'vị trí' : 'câu');
+                    badge.innerText = `${sec.totalItems} ${unit} - ${sec.maxPoints} điểm`;
+                }
+            }
+        }
+    }
+
+    window.openAdmin = function() {
+        document.getElementById('adminModal').style.display = 'flex';
+        document.getElementById('cfg-subject').value = config.subject;
+        document.getElementById('cfg-grade').value = config.grade;
+        document.getElementById('cfg-lesson-name').value = config.lessonName;
+        document.getElementById('cfg-lesson-content').value = config.lessonContent || '';
+        document.getElementById('cfg-target-points').value = config.targetTotalPoints;
+        
+        const dragContainer = document.getElementById('admin-drag-images-container');
+        if (dragContainer) {
+            dragContainer.innerHTML = '';
+            for(let i = 1; i <= 4; i++) {
+                dragContainer.innerHTML += `
+                    <div style="display:flex; align-items:center; gap:10px; background:var(--bg-body); padding:8px; border-radius:6px;">
+                        <label style="flex:1; font-size: 0.9rem;">Thay ảnh ô thả số ${i}:</label>
+                        <input type="file" accept="image/*" class="cfg-drag-img" data-id="drag_${i}" style="flex:2; font-size: 0.85rem;">
+                    </div>
+                `;
+            }
+        }
+
+        const container = document.getElementById('admin-sections-config');
+        container.innerHTML = '';
+        
+        for (let key in config.sections) {
+            const sec = config.sections[key];
+            const html = `
+                <div class="admin-group">
+                    <div class="admin-group-title">
+                        <span>${sec.name}</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="cfg-en-${key}" ${sec.enabled ? 'checked' : ''} onchange="recalcTotal()">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="admin-row">
+                        <div class="admin-col">
+                            <label>Số câu/hạng mục:</label>
+                            <input type="number" id="cfg-count-${key}" value="${sec.totalItems}" min="1">
+                        </div>
+                        <div class="admin-col">
+                            <label>Điểm tối đa:</label>
+                            <input type="number" step="0.25" id="cfg-pts-${key}" value="${sec.maxPoints}" onchange="recalcTotal()">
+                        </div>
+                    </div>
+                </div>
+            `;
+            container.insertAdjacentHTML('beforeend', html);
+        }
+        recalcTotal();
+    }
+
+    window.closeAdmin = function() {
+        document.getElementById('adminModal').style.display = 'none';
+    }
+
+    window.recalcTotal = function() {
+        let currentTotal = 0;
+        const targetTotal = parseFloat(document.getElementById('cfg-target-points').value) || 10;
+        
+        for (let key in config.sections) {
+            const isEnabled = document.getElementById(`cfg-en-${key}`).checked;
+            if (isEnabled) {
+                currentTotal += parseFloat(document.getElementById(`cfg-pts-${key}`).value) || 0;
+            }
+        }
+        const checkEl = document.getElementById('total-points-check');
+        checkEl.innerText = `Tổng điểm phân bổ: ${currentTotal.toFixed(2)} / ${targetTotal}`;
+        
+        if (Math.abs(currentTotal - targetTotal) > 0.01) {
+            checkEl.classList.add('error');
+        } else {
+            checkEl.classList.remove('error');
+        }
+        return { currentTotal, targetTotal };
+    }
+
+    window.saveAdminConfig = function() {
+        const { currentTotal, targetTotal } = recalcTotal();
+        if (Math.abs(currentTotal - targetTotal) > 0.01) {
+            showMessage(
+                "CẢNH BÁO", 
+                `Tổng điểm phân bổ (${currentTotal}) khác với tổng điểm chuẩn (${targetTotal}). Bạn có chắc chắn muốn lưu?`,
+                true,
+                executeSaveConfigData
+            );
+        } else {
+            executeSaveConfigData();
+        }
+    }
+
+    window.executeSaveConfigData = function() {
+        const { targetTotal } = recalcTotal();
+        config.subject = document.getElementById('cfg-subject').value;
+        config.grade = document.getElementById('cfg-grade').value;
+        config.lessonName = document.getElementById('cfg-lesson-name').value;
+        config.lessonContent = document.getElementById('cfg-lesson-content').value;
+        config.targetTotalPoints = targetTotal;
+
+        for (let key in config.sections) {
+            config.sections[key].enabled = document.getElementById(`cfg-en-${key}`).checked;
+            config.sections[key].totalItems = parseInt(document.getElementById(`cfg-count-${key}`).value) || 0;
+            config.sections[key].maxPoints = parseFloat(document.getElementById(`cfg-pts-${key}`).value) || 0;
+        }
+
+        const dragFiles = document.querySelectorAll('.cfg-drag-img');
+        let filesToProcess = 0;
+        let filesProcessed = 0;
+
+        dragFiles.forEach(input => {
+            if(input.files && input.files[0]) filesToProcess++;
+        });
+
+        if(filesToProcess === 0) {
+            finalizeSave();
+        } else {
+            dragFiles.forEach(input => {
+                if(input.files && input.files[0]) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        config.dragImages[input.dataset.id] = e.target.result;
+                        filesProcessed++;
+                        if(filesProcessed === filesToProcess) finalizeSave();
+                    }
+                    reader.readAsDataURL(input.files[0]);
+                }
+            });
+        }
+    }
+
+    window.finalizeSave = function() {
+        let isSaved = safeSetStorage('pht_config', JSON.stringify(config));
+        applyConfigToUI();
+        closeAdmin();
+        
+        if(isSaved) {
+            showMessage("Thành công", "Đã lưu cấu hình bài học!");
+        } else {
+            showMessage("Lưu ý", "Do giới hạn bảo mật của trình duyệt, cấu hình đã được áp dụng nhưng không thể lưu vĩnh viễn (sẽ mất khi tải lại trang).");
+        }
+    }
+
+    // 1. MCQ Selection UI logic
+    document.querySelectorAll('.option-label').forEach(label => {
+        label.addEventListener('click', function(e) {
+            if(document.getElementById('btnSubmit').disabled) return;
+            const parent = this.closest('.options-grid');
+            parent.querySelectorAll('.option-label').forEach(l => l.classList.remove('selected'));
+            this.classList.add('selected');
+            const radio = this.querySelector('input[type="radio"]');
+            radio.checked = true;
+        });
+    });
+
+    // 2. Matching Logic
+    let activeMatchA = null;
+    let matchPairs = {};
+
+    document.querySelectorAll('.match-item.item-a').forEach(item => {
+        item.addEventListener('click', function() {
+            if(document.getElementById('btnSubmit').disabled) return;
+            if(this.classList.contains('matched')) return;
+            document.querySelectorAll('.match-item.item-a').forEach(i => i.classList.remove('selected'));
+            this.classList.add('selected');
+            activeMatchA = this;
+        });
+    });
+
+    document.querySelectorAll('.match-item.item-b').forEach(item => {
+        item.addEventListener('click', function() {
+            if(document.getElementById('btnSubmit').disabled) return;
+            if(!activeMatchA) return; 
+            if(this.classList.contains('matched')) return; 
+
+            const idA = activeMatchA.getAttribute('data-id');
+            const idB = this.getAttribute('data-id');
+            matchPairs[idA] = idB;
+
+            activeMatchA.classList.remove('selected');
+            activeMatchA.classList.add('matched');
+            this.classList.add('matched');
+            
+            const hue = Math.floor(Math.random() * 360);
+            const color = `hsl(${hue}, 70%, 90%)`;
+            const borderColor = `hsl(${hue}, 70%, 40%)`;
+            
+            activeMatchA.style.backgroundColor = color;
+            activeMatchA.style.borderColor = borderColor;
+            activeMatchA.style.color = borderColor;
+            this.style.backgroundColor = color;
+            this.style.borderColor = borderColor;
+            this.style.color = borderColor;
+            activeMatchA = null;
+        });
+    });
+
+    document.querySelectorAll('.match-item').forEach(item => {
+        item.addEventListener('dblclick', function() {
+            if(document.getElementById('btnSubmit').disabled) return;
+            if(!this.classList.contains('matched')) return;
+            
+            const id = this.getAttribute('data-id');
+            let pairIdA = null, pairIdB = null;
+
+            if(this.classList.contains('item-a')) {
+                pairIdA = id;
+                pairIdB = matchPairs[id];
+            } else {
+                pairIdB = id;
+                for(let k in matchPairs) if(matchPairs[k] === id) pairIdA = k;
+            }
+
+            if(pairIdA && pairIdB) {
+                delete matchPairs[pairIdA];
+                const elA = document.querySelector(`.item-a[data-id="${pairIdA}"]`);
+                const elB = document.querySelector(`.item-b[data-id="${pairIdB}"]`);
+                if(elA) { elA.classList.remove('matched'); elA.style = ""; }
+                if(elB) { elB.classList.remove('matched'); elB.style = ""; }
+            }
+        });
+    });
+
+    // 3. Drag and Drop Logic
+    const draggables = document.querySelectorAll('.draggable');
+    const dropzones = document.querySelectorAll('.dropzone');
+    let draggedItem = null;
+    let selectedItemForClickDrop = null;
+
+    draggables.forEach(draggable => {
+        draggable.addEventListener('dragstart', () => {
+            if(document.getElementById('btnSubmit').disabled) return;
+            draggedItem = draggable;
+            setTimeout(() => draggable.style.opacity = '0.5', 0);
+        });
+
+        draggable.addEventListener('dragend', () => {
+            if(document.getElementById('btnSubmit').disabled) return;
+            setTimeout(() => {
+                draggable.style.opacity = '1';
+                draggedItem = null;
+            }, 0);
+        });
+
+        draggable.addEventListener('click', function() {
+            if(document.getElementById('btnSubmit').disabled) return;
+            if(this.parentElement.classList.contains('dropzone')) {
+                document.getElementById('drag-source').appendChild(this);
+                this.parentElement.classList.remove('has-item');
+                return;
+            }
+            draggables.forEach(d => d.style.borderColor = "var(--primary)");
+            this.style.borderColor = "var(--warning)";
+            selectedItemForClickDrop = this;
+        });
+    });
+
+    dropzones.forEach(dropzone => {
+        dropzone.addEventListener('dragover', e => {
+            e.preventDefault();
+            if(!document.getElementById('btnSubmit').disabled && !dropzone.querySelector('.draggable')) {
+                dropzone.classList.add('dragover');
+            }
+        });
+
+        dropzone.addEventListener('dragleave', () => {
+            dropzone.classList.remove('dragover');
+        });
+
+        dropzone.addEventListener('drop', e => {
+            e.preventDefault();
+            dropzone.classList.remove('dragover');
+            if(document.getElementById('btnSubmit').disabled) return;
+            
+            if (draggedItem && !dropzone.querySelector('.draggable')) {
+                dropzone.appendChild(draggedItem);
+                dropzone.classList.add('has-item');
+            }
+        });
+
+        dropzone.addEventListener('click', function() {
+            if(document.getElementById('btnSubmit').disabled) return;
+            if(selectedItemForClickDrop && !this.querySelector('.draggable')) {
+                this.appendChild(selectedItemForClickDrop);
+                this.classList.add('has-item');
+                selectedItemForClickDrop.style.borderColor = "var(--primary)";
+                selectedItemForClickDrop = null;
+            }
+        });
+    });
+
+    window.submitQuiz = function() {
+        const studentName = document.getElementById('studentName').value.trim();
+        const studentClass = document.getElementById('studentClass').value.trim();
+        if(!studentName || !studentClass) {
+            showMessage("Thiếu thông tin", "Vui lòng nhập đầy đủ Họ tên và Lớp trước khi nộp bài!");
+            document.getElementById('studentName').focus();
+            return;
+        }
+
+        let totalAchievedPoints = 0;
+        let totalPossibleActivePoints = 0;
+        let statTotal = 0;
+        let statCorrect = 0;
+        let statUnanswered = 0;
+
+        const btn = document.getElementById('btnSubmit');
+        btn.disabled = true;
+        btn.innerText = "Đang xử lý...";
+        
+        document.querySelectorAll('input, select').forEach(el => el.disabled = true);
+        document.getElementById('app').classList.add('show-feedback');
+
+        const formatString = (str) => str.toLowerCase().replace(/\s+/g, '').trim();
+
+        if (config.sections.mcq.enabled) {
+            totalPossibleActivePoints += config.sections.mcq.maxPoints;
+            let mcqCorrect = 0;
+            const mcqBlocks = document.querySelectorAll('#mcq-container .question-block');
+            const totalMCQ = mcqBlocks.length;
+            statTotal += totalMCQ;
+            
+            mcqBlocks.forEach(block => {
+                const qName = block.querySelector('input[type="radio"]').name;
+                const checked = block.querySelector(`input[name="${qName}"]:checked`);
+                const ansText = block.querySelector('.correct-ans').innerText; 
+                const correctLetter = ansText.split(':')[1].trim().charAt(0);
+
+                if (!checked) {
+                    statUnanswered++;
+                    block.classList.add('item-incorrect');
+                } else if (checked.value === correctLetter) {
+                    mcqCorrect++;
+                    statCorrect++;
+                    block.classList.add('item-correct');
+                } else {
+                    block.classList.add('item-incorrect');
+                }
+            });
+            if(totalMCQ > 0) totalAchievedPoints += (mcqCorrect / totalMCQ) * config.sections.mcq.maxPoints;
+        }
+
+        if (config.sections.fill.enabled) {
+            totalPossibleActivePoints += config.sections.fill.maxPoints;
+            let fillCorrectCount = 0;
+            const inputs = document.querySelectorAll('#sec-fill .fill-blank');
+            const totalFill = inputs.length;
+            statTotal += totalFill;
+
+            inputs.forEach(input => {
+                const userVal = formatString(input.value);
+                const allowedAns = input.getAttribute('data-ans').split('|').map(formatString);
+                
+                if (userVal === "") {
+                    statUnanswered++;
+                    input.classList.add('item-incorrect');
+                } else if (allowedAns.includes(userVal)) {
+                    fillCorrectCount++;
+                    statCorrect++;
+                    input.classList.add('item-correct');
+                } else {
+                    input.classList.add('item-incorrect');
+                }
+            });
+            if(totalFill > 0) totalAchievedPoints += (fillCorrectCount / totalFill) * config.sections.fill.maxPoints;
+        }
+
+        if (config.sections.tf.enabled) {
+            totalPossibleActivePoints += config.sections.tf.maxPoints;
+            let tfCorrect = 0;
+            const rows = document.querySelectorAll('#tf-container tr');
+            const totalTF = rows.length;
+            statTotal += totalTF;
+
+            rows.forEach(row => {
+                const correctAns = row.getAttribute('data-ans');
+                const radioName = row.querySelector('.tf-radio').name;
+                const checked = row.querySelector(`input[name="${radioName}"]:checked`);
+
+                if (!checked) {
+                    statUnanswered++;
+                    row.classList.add('item-incorrect');
+                } else if (checked.value === correctAns) {
+                    tfCorrect++;
+                    statCorrect++;
+                    row.classList.add('item-correct');
+                } else {
+                    row.classList.add('item-incorrect');
+                }
+            });
+            if(totalTF > 0) totalAchievedPoints += (tfCorrect / totalTF) * config.sections.tf.maxPoints;
+        }
+
+        if (config.sections.match.enabled) {
+            totalPossibleActivePoints += config.sections.match.maxPoints;
+            let matchCorrect = 0;
+            const totalMatch = Object.keys(matchAnswers).length;
+            statTotal += totalMatch;
+
+            const answeredMatches = Object.keys(matchPairs).length;
+            statUnanswered += (totalMatch - answeredMatches);
+
+            for (let idA in matchAnswers) {
+                if (matchPairs[idA] === matchAnswers[idA]) {
+                    matchCorrect++;
+                    statCorrect++;
+                }
+            }
+            if(totalMatch > 0) totalAchievedPoints += (matchCorrect / totalMatch) * config.sections.match.maxPoints;
+            document.getElementById('match-ans').style.display = 'block';
+        }
+
+        if (config.sections.drag.enabled) {
+            totalPossibleActivePoints += config.sections.drag.maxPoints;
+            let dragCorrect = 0;
+            const dropzones = document.querySelectorAll('#drop-container .dropzone');
+            const totalDrag = dropzones.length;
+            statTotal += totalDrag;
+
+            dropzones.forEach(zone => {
+                const expected = zone.getAttribute('data-ans');
+                const droppedItem = zone.querySelector('.draggable');
+                
+                if (!droppedItem) {
+                    statUnanswered++;
+                    zone.classList.add('item-incorrect');
+                } else if (droppedItem.getAttribute('data-val') === expected) {
+                    dragCorrect++;
+                    statCorrect++;
+                    zone.classList.add('item-correct');
+                } else {
+                    zone.classList.add('item-incorrect');
+                }
+            });
+            if(totalDrag > 0) totalAchievedPoints += (dragCorrect / totalDrag) * config.sections.drag.maxPoints;
+        }
+
+        if (config.sections.table && config.sections.table.enabled) {
+            totalPossibleActivePoints += config.sections.table.maxPoints;
+            let tblCorrectCount = 0;
+            const selects = document.querySelectorAll('#sec-table .summary-select');
+            const totalTbl = selects.length;
+            statTotal += totalTbl;
+
+            selects.forEach(select => {
+                const userVal = select.value;
+                const correctVal = select.getAttribute('data-ans');
+                
+                if (userVal === "") {
+                    statUnanswered++;
+                    select.classList.add('item-incorrect');
+                } else if (userVal === correctVal) {
+                    tblCorrectCount++;
+                    statCorrect++;
+                    select.classList.add('item-correct');
+                } else {
+                    select.classList.add('item-incorrect');
+                }
+            });
+            if(totalTbl > 0) totalAchievedPoints += (tblCorrectCount / totalTbl) * config.sections.table.maxPoints;
+        }
+
+        const finalScore = Math.min(totalAchievedPoints, totalPossibleActivePoints).toFixed(2);
+        const statIncorrect = statTotal - statCorrect - statUnanswered;
+
+        // URL KẾT NỐI GOOGLE SHEETS MỚI
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw7fYU1R0iohqPDbgVus3hxWJV8bBS4n4-MFTufJ0zA7o5it5mG1uol4ZG0GY1QYdOhnQ/exec';
+        
+        const payload = {
+            name: studentName,
+            className: studentClass,
+            score: finalScore,
+            correctCount: statCorrect,
+            incorrectCount: statIncorrect,
+            unansweredCount: statUnanswered,
+            totalCount: statTotal
+        };
+
+        if (SCRIPT_URL && SCRIPT_URL.includes("script.google.com")) {
+            fetch(SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify(payload)
+            }).then(() => {
+                showResultsUI(finalScore, totalPossibleActivePoints);
+            }).catch(err => {
+                console.error("Lỗi mạng khi nộp bài", err);
+                showResultsUI(finalScore, totalPossibleActivePoints);
+            });
+        } else {
+            showResultsUI(finalScore, totalPossibleActivePoints);
+        }
+    }
+
+    window.showResultsUI = function(finalScore, totalPossibleActivePoints) {
+        document.getElementById('btnSubmit').innerText = "Đã Nộp Bài";
+        document.getElementById('score-val').innerText = finalScore;
+        document.getElementById('score-max').innerText = "/" + totalPossibleActivePoints;
+        
+        const percent = (finalScore / totalPossibleActivePoints) * 100;
+        const circle = document.getElementById('score-circle');
+        
+        let gradColor = 'var(--success)';
+        let msg = "Xuất sắc! Em đã nắm vững kiến thức.";
+        if(percent < 50) { gradColor = 'var(--danger)'; msg = "Cần cố gắng ôn tập thêm nhé!"; }
+        else if (percent < 80) { gradColor = 'var(--warning)'; msg = "Khá tốt! Hãy xem lại các câu sai."; }
+        
+        circle.style.background = `conic-gradient(${gradColor} ${percent}%, #e5e7eb 0)`;
+        document.getElementById('score-val').style.color = gradColor;
+        document.getElementById('result-message').innerText = msg;
+        
+        document.getElementById('resultModal').style.display = 'flex';
+        document.getElementById('summary-section').style.display = 'block';
+    }
+
+    window.closeResult = function() {
+        document.getElementById('resultModal').style.display = 'none';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    window.onload = function() {
+        loadConfig();
+    };
+
+</script>
+</body>
+</html>
